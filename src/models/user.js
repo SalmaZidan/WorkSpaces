@@ -37,7 +37,6 @@ const UserSchema = new mongoose.Schema({
     },
     user_comments:[
         {
-            comment_id:{type:String},
             service_id:{type:String}, //mongoose.Schema.Types.ObjectId
             comment:{type:String}
         }

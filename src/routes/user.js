@@ -2,6 +2,7 @@ const express= require('express')
 const User = require('../models/user')
 const mongodb = require('mongodb')
 const jwt = require('jsonwebtoken');
+const auth = require('../middleware/authmiddleware')
 
 const router = new express.Router()
 
@@ -36,19 +37,19 @@ router.get('/Users/:type', async(req,res)=>{
         res.status(200).send({
             status:1,
             data: user_data,
-            msg: 'all ${type} selected'
+            msg: `all ${type} selected`
         })
     }
     catch(e){
         res.status(500).send({
             status:0,
             data: e,
-            msg: 'error loading ${type} data'
+            msg: `error loading ${type} data`
         })
     }
 })
 
-router.get('/singleUser/:id', async(req,res)=>{
+router.get('/singleUser/:id',auth, async(req,res)=>{
     _id = req.params.id
     try{
         const user_data = await User.findById(_id)
@@ -67,7 +68,7 @@ router.get('/singleUser/:id', async(req,res)=>{
     }
 })
 
-router.patch('/UserUpdate/:id', async(req,res)=>{
+router.patch('/UserUpdate/:id',auth, async(req,res)=>{
     const _id= req.params.id
     const updates = req.body
     const updatesKeys = Object.keys(req.body)
@@ -107,7 +108,7 @@ router.patch('/UserUpdate/:id', async(req,res)=>{
     }
 })
 
-router.patch('/UpdatePassword/:id', async(req,res)=>{
+router.patch('/UpdatePassword/:id',auth, async(req,res)=>{
     const _id= req.params.id
     const updates = req.body
     const updatesKeys = Object.keys(req.body)
@@ -180,7 +181,6 @@ router.patch('/logout', async (req, res)=>{
         let i = 0 
         if(!user_data)throw new Error()
         else{
-
             user_data.tokens.filter((singletoken)=>{
 
                 if (singletoken.token == token){
@@ -189,19 +189,7 @@ router.patch('/logout', async (req, res)=>{
                     res.send({ data : user_data}) 
                 }
                 i++
-            })
-            //  await user_data.updateOne(
-            //     { 
-            //         _id: user_data._id
-            //     },
-            //     {
-            //         $pull : { 'tokens' : {  $elemMatch: { 'token' : token } } }
-            //     },(error, success) => {
-            //         if (error) console.log(error);
-            //         console.log(success);
-            //       });
-
-              
+            }) 
         }
      
     }
@@ -210,6 +198,107 @@ router.patch('/logout', async (req, res)=>{
             status:0,
             msg:"need auth",
             data: ""
+        })
+    }
+
+})
+
+router.get('/Users',auth, async(req,res)=>{
+    type = req.params.type
+    try{
+        const user_data = await User.find()
+        res.status(200).send({
+            status:1,
+            data: user_data,
+            msg: `all users selected`
+        })
+    }
+    catch(e){
+        res.status(500).send({
+            status:0,
+            data: e,
+            msg: `error loading data`
+        })
+    }
+})
+
+router.post('/user/addComment/:ServiceId',auth, async (req, res)=>{
+    const _id= req.params.ServiceId
+    
+    let user_data = await User.findById(req.data._id) // from auth
+
+    const Comment = {
+        service_id:_id,
+        comment: req.body.comment
+    }
+
+    if(!user_data){
+        res.status(400).send({
+            statue: 0,
+            data:'',
+            msg:"user not exists",
+            error:''
+        })
+    }
+    try{
+        user_data.user_comments.push(Comment)
+        user_data.save()
+
+        res.status(200).send({
+            statue: 1,
+            data:user_data,
+            msg:"comment added",
+            error:''
+        })
+    }catch(e){
+        res.status(500).send({
+            statue: 0,
+            data:'',
+            msg:"Addition failed",
+            error:e
+        })
+    }
+    
+
+
+    
+
+
+
+})
+
+router.post('/deleteComment/:CommentId',auth, async (req, res)=>{
+    const comment_id= req.params.CommentId
+    let user_data = await User.findById(req.data._id)
+    
+    try{
+        let i = 0 
+        if(!user_data)throw new Error()
+        else{
+            user_data.user_comments.filter((singleComment)=>{
+
+                if (singleComment._id == comment_id){
+                    user_data.user_comments.splice(i, 1)
+                    user_data.save()
+                    res.status(200).send({ 
+                        statue : 1,
+                        msg: "Comment Deleted",
+                        data : user_data,
+                        error: ''
+
+                    }) 
+                }
+                i++
+            }) 
+        }
+     
+    }
+    catch(e){
+        res.status(500).send({
+            status:0,
+            msg:"can't find this comment",
+            data: "",
+            error: e
         })
     }
 
