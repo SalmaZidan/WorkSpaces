@@ -1,8 +1,9 @@
-const express= require('express')
-const User = require('../models/user')
-const mongodb = require('mongodb')
+const express= require('express');
+const User = require('../models/user');
+const mongodb = require('mongodb');
 const jwt = require('jsonwebtoken');
-const auth = require('../middleware/authmiddleware')
+const auth = require('../middleware/authmiddleware');
+const multer = require('multer');
 
 const router = new express.Router()
 
@@ -19,7 +20,7 @@ router.post('/User/Registration', async (req, res)=>{
         })
     }
     catch(e){
-        res.status(500).send({
+        res.status(200).send({
             status:0,
             data: '',
             msg: 'failed registration',
@@ -41,7 +42,7 @@ router.get('/Users/:type', async(req,res)=>{
         })
     }
     catch(e){
-        res.status(500).send({
+        res.status(200).send({
             status:0,
             data: e,
             msg: `error loading ${type} data`
@@ -60,7 +61,7 @@ router.get('/singleUser/:id',auth, async(req,res)=>{
         })
     }
     catch(e){
-        res.status(500).send({
+        res.status(200).send({
             status:0,
             data: e,
             msg: 'error loading user data'
@@ -75,7 +76,7 @@ router.patch('/UserUpdate/:id',auth, async(req,res)=>{
     const allowedUpdates = ["user_name","user_email","user_image","user_phoneNumber","user_address"]
     const validUpdates = updatesKeys.every((u)=>allowedUpdates.includes(u))
     if(!validUpdates)
-        res.status(400).send({
+        res.status(200).send({
             status:4,
             data:'',
             msg:'invalid updates'
@@ -99,7 +100,7 @@ router.patch('/UserUpdate/:id',auth, async(req,res)=>{
         })
     }
     catch(e){
-        res.status(500).send({
+        res.status(200).send({
             statue: 0,
             data:'',
             msg:"error edit data",
@@ -115,7 +116,7 @@ router.patch('/UpdatePassword/:id',auth, async(req,res)=>{
     const allowedUpdates = ["user_password"]
     const validUpdates = updatesKeys.every((u)=>allowedUpdates.includes(u))
     if(!validUpdates)
-        res.status(400).send({
+        res.status(200).send({
             status:4,
             data:'',
             msg:'invalid updates'
@@ -139,7 +140,7 @@ router.patch('/UpdatePassword/:id',auth, async(req,res)=>{
         })
     }
     catch(e){
-        res.status(500).send({
+        res.status(200).send({
             statue: 0,
             data:'',
             msg:"error edit data",
@@ -160,7 +161,7 @@ router.post('/login', async (req, res)=>{
         })
     }
     catch(e){
-        res.status(500).send({
+        res.status(200).send({
             status:0,
             data: e,
             msg: "login error",
@@ -214,7 +215,7 @@ router.get('/Users',auth, async(req,res)=>{
         })
     }
     catch(e){
-        res.status(500).send({
+        res.status(200).send({
             status:0,
             data: e,
             msg: `error loading data`
@@ -233,7 +234,7 @@ router.post('/user/addComment/:ServiceId',auth, async (req, res)=>{
     }
 
     if(!user_data){
-        res.status(400).send({
+        res.status(200).send({
             statue: 0,
             data:'',
             msg:"user not exists",
@@ -251,7 +252,7 @@ router.post('/user/addComment/:ServiceId',auth, async (req, res)=>{
             error:''
         })
     }catch(e){
-        res.status(500).send({
+        res.status(200).send({
             statue: 0,
             data:'',
             msg:"Addition failed",
@@ -304,6 +305,41 @@ router.post('/deleteComment/:CommentId',auth, async (req, res)=>{
 
 })
 
+router.post('/deleteOne',auth, async (req, res)=>{
+    try{
+        await User.deleteOne({_id : req.data._id})
+        User.save()
+        res.status(200).send({ 
+            statue : 1,
+            msg: "User Deleted",
+            error: ''
+        }) 
+    }catch(e){
+        res.status(200).send({ 
+            statue : 0,
+            msg: "User Not Found",
+            error: e
+        }) 
+    }
+    
+})
+
+
+const storage = multer.diskStorage({
+    destination: function(req,file,cb){
+        cb(null,'images/users_profile')
+    },
+    filename: function(req,file,cb){
+        cb(null, req.data._id + '-' + file.originalname)
+    }
+    
+})
+
+const upload = multer({storage: storage})
+
+router.post('/user/UploadProfileImg',auth, upload.single('upload'), (req, res)=>{
+    res.send("uploded")
+})
 
 
 

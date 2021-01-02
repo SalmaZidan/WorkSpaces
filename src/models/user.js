@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const workingSpace = require('./workingspace');
+
 
 const UserSchema = new mongoose.Schema({
     user_name:{
@@ -45,7 +48,17 @@ const UserSchema = new mongoose.Schema({
         {
             token:{type: String}
         }
-    ]
+    ],
+    workspace:{
+        type: mongoose.Schema.Types.ObjectId, 
+        ref:'workingSpace'
+    }
+})
+
+UserSchema.pre('save', async function(next){
+    const user = this
+    if(user.isModified('user_password')) user.user_password = await bcrypt.hash(user.user_password, 8)
+    next()
 })
 
 UserSchema.methods.toJSON=function(){
@@ -56,9 +69,12 @@ UserSchema.methods.toJSON=function(){
 }
 
 UserSchema.statics.findByCredentials = async function(user_email, user_password){
-   const user = await User.findOne({ "user_email" : user_email, "user_password" : user_password })
+   const user = await User.findOne({user_email})
    if(!user) throw new Error('unauthorized')
+   const isMatch = await bcrypt.compare(user_password, user.user_password)
+   if(!isMatch) throw new Error('unable login')
    return user 
+
 }
 
 UserSchema.methods.genrateToken = async function(){
@@ -69,6 +85,10 @@ UserSchema.methods.genrateToken = async function(){
     return token
 
 }
+
+
+
+
 
 const User = mongoose.model('user', UserSchema)
 module.exports = User
