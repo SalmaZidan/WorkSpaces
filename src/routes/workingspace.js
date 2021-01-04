@@ -1,6 +1,9 @@
 const express = require('express')
+const auth = require('../middleware/authmiddleware')
 const WorkingSpace = require('../models/workingspace')
-const router = new express.Router()
+const router = new express.Router();
+const multer = require('multer');
+
 // add WorkingSpaces
 router.post('/addWorkingSpace',async (req,res)=>{
     const workingSpace = new WorkingSpace(req.body)
@@ -40,24 +43,6 @@ router.get('/allWorkingSpaces',async (req,res)=>{
         })
     }
 })
-
-// show workingSpace employees
-router.get('/WorkingSpaceEmployees/:id',async (req,res)=>{
-    const _id= req.params.id
-    x = WorkingSpace.findById(_id)
-    try{
-        await x.populate({
-            path:'employees',
-        }).execPopulate()
-        
-        res.send(x.employees)
-    }
-    catch(e){
-        res.send(e)
-    }
-})
-
-
 
 //edit workingSpace
 router.patch('/workingSpace/:id', async(req,res)=>{
@@ -176,6 +161,189 @@ router.post('/workingSpace/addService/:id', async(req,res)=>{
         })
     }
 })
+
+//delete service
+router.post("/deleteService/:ServiceId",auth, async (req, res) => {
+    const serviceId = req.params.ServiceId;
+    const workingSpaces = await WorkingSpace.findById(req.data.workspace)
+    try { 
+      let i = 0;
+      workingSpaces.services.filter((singleService) => {
+          if (singleService._id == serviceId) {
+            workingSpaces.services.splice(i, 1);
+            workingSpaces.save();
+            res.status(200).send({
+              statue: 1,
+              data: workingSpaces,
+              msg: "service Deleted successfully"  
+            });
+          }
+          i++;
+        });
+    } 
+    catch (e) {
+      res.status(500).send({ 
+        status: 0, 
+          data: e ,
+          msg: "can't delete this service"
+  
+        });
+    }
+})
+  
+//edit Service
+router.patch("/editService/:serviceId",auth, async (req, res) => {
+    const workingSpace_data = await WorkingSpace.findById(req.data.workspace)
+    const serviceId = req.params.serviceId;
+    const updates = req.body;
+    const updatesKeys = Object.keys(req.body);
+    const allowedUpdates = [
+      "serviceName",
+      "summary",
+      "capacity",
+      "currentBookings",
+      "cost"
+    ];
+    const validUpdates = updatesKeys.every((u) => allowedUpdates.includes(u));
+    if (!validUpdates)
+      res.status(400).send({
+        status: 4,
+        data: "",
+        msg: "invalid updates",
+    });
+
+    try {
+      let i = 0;
+      workingSpace_data.services.filter((singleService) => {
+         
+          if (singleService._id == serviceId) {
+            console.log(singleService)
+            workingSpace_data.services[i] = updates
+            workingSpace_data.save();
+            res.status(200).send({
+              statue: 1,
+              data: workingSpace_data,
+              msg: "service updated successfully"  
+            });
+          }
+          i++;
+        });
+              
+    } catch (e) {
+      res.status(500).send({
+        statue: 0,
+        data: e,
+        msg: "error edit data",
+    
+  });
+  }
+})
+
+//add comment
+router.post('/workingSpace/addcomment/:workspace_id/:Service_id',auth, async(req,res)=>{
+    const Service_id = req.params.Service_id
+    const workspace_id = req.params.workspace_id
+
+    data = {
+        ...req.body,
+        user_id: req.data._id
+    }
+
+    try{
+        const workingSpace = await WorkingSpace.findById(workspace_id)
+
+        if(!workingSpace){
+            res.statue(200).send({
+                status: 0 ,
+                data: '',
+                msg: "check workspace again",
+                error :'workspace not found'
+            })
+        }
+        
+        let i = 0 
+        workingSpace.services.filter((singleService=>{
+            
+            if (singleService._id == Service_id ){
+                workingSpace.services[i].comments.push(data);
+                console.log(workingSpace.services[i].comments)
+                workingSpace.save()
+                res.status(200).send({
+                    status: 1,
+                    data: workingSpace,
+                    msg: "comment added",
+                    error : ''
+                })
+            }
+            i++
+        }))
+    }
+    catch(e){
+        res.status(200).send({
+            status: 0,
+            data: 'workingSpaces',
+            msg: "comment faield added",
+            error : e
+        })
+    }
+})
+
+//Delete comment
+router.post('/workingSpace/deletecomment/:workspace_id/:Service_id/:comment_id',auth, async(req,res)=>{
+    const Service_id = req.params.Service_id
+    const workspace_id = req.params.workspace_id
+    const comment_id = req.params.comment_id
+    let i = 0 
+    let j = 0
+
+    try{
+        const workingSpace = await WorkingSpace.findById(workspace_id)
+
+        if(!workingSpace){
+            res.statue(200).send({
+                status: 0 ,
+                data: '',
+                msg: "check workspace again",
+                error :'workspace not found'
+            })
+        }
+        
+        workingSpace.services.filter((singleService=>{
+            
+            if (singleService._id == Service_id ){
+
+                workingSpace.services[i].comments.filter((singleComment=>{
+
+                    if (singleComment._id == comment_id){
+                        workingSpace.services[i].comments.splice(j,1)
+                        workingSpace.save()
+                        res.status(200).send({
+                            status: 1,
+                            data: workingSpace,
+                            msg: "comment deleted",
+                            error : ''
+                        })
+                    }
+                    j++
+                    
+                }))
+                
+
+            }
+            i++
+        }))
+    }
+    catch(e){
+        res.status(200).send({
+            status: 0,
+            data: 'workingSpaces',
+            msg: "comment faield deleted",
+            error : e
+        })
+    }
+})
+
+
 
 
 module.exports = router

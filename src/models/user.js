@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const workingSpace = require('./workingspace');
 
-
 const UserSchema = new mongoose.Schema({
     user_name:{
         type: String
@@ -16,7 +15,8 @@ const UserSchema = new mongoose.Schema({
     user_type:{
         type:String,
         enum: [ "admin", "client", "workspace admin", "workspace employee"],
-        required : true,
+        default: "client",
+        required : true
     },
     user_password:{
         type: String,
@@ -36,14 +36,8 @@ const UserSchema = new mongoose.Schema({
     user_address:{
         country:{type:String},
         city:{type:String},
-        neighbarhood:{type:String}
+        neighbarhood:{type:String} //edit name
     },
-    user_comments:[
-        {
-            service_id:{type:String}, //mongoose.Schema.Types.ObjectId
-            comment:{type:String}
-        }
-    ],
     tokens:[
         {
             token:{type: String}
@@ -51,8 +45,11 @@ const UserSchema = new mongoose.Schema({
     ],
     workspace:{
         type: mongoose.Schema.Types.ObjectId, 
-        ref:'workingSpace'
-    }
+        ref:'workingSpace',
+        default : mongoose.Types.ObjectId('4edd40c86762e0fb12000003'), // defult to client
+        required: true
+    },
+    user_profile_img:{ type:String }
 })
 
 UserSchema.pre('save', async function(next){
@@ -85,8 +82,6 @@ UserSchema.methods.genrateToken = async function(){
     return token
 
 }
-
-
 
 
 

@@ -11,7 +11,7 @@ const workingSpaceSchema = new mongoose.Schema({
         government:{
             type: String,
             //required: true
-        },
+        }, //edit name 
         city:{
             type: String,
             //required: true
@@ -38,28 +38,36 @@ const workingSpaceSchema = new mongoose.Schema({
             serviceName: {
                 type: String,
                 required: true
-              },
+            },
             summary: {
                 type: String,
                 required: true
-              },
+            },
             capacity: {
                 type: Number,
                 required: true
-              },
+            },
             currentBookings: {
                 type: Number,
-                default: 0
-              },
+                default: 0,
+            },
             cost:{
                 type: String,
                 required:true
-              }
+            },
+            comments:[
+                {
+                    user_id:{type: mongoose.Schema.Types.ObjectId},
+                    comment:{type:String}
+                }
+            ],
+            service_img:{type:String}
         }
-    ]
+    ],
+    Profile_img:{ type:String }
 })
 
-workingSpaceSchema.virtual('employees',{
+workingSpaceSchema.virtual('User',{
     ref:'User',
     localField: '_id',
     foreignField: 'workspace'

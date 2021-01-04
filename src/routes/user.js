@@ -195,7 +195,7 @@ router.patch('/logout', async (req, res)=>{
      
     }
     catch(e){
-        res.status(500).send({
+        res.status(200).send({
             status:0,
             msg:"need auth",
             data: ""
@@ -223,87 +223,87 @@ router.get('/Users',auth, async(req,res)=>{
     }
 })
 
-router.post('/user/addComment/:ServiceId',auth, async (req, res)=>{
-    const _id= req.params.ServiceId
+// router.post('/user/addComment/:ServiceId',auth, async (req, res)=>{
+//     const _id= req.params.ServiceId
     
-    let user_data = await User.findById(req.data._id) // from auth
+//     let user_data = await User.findById(req.data._id) // from auth
 
-    const Comment = {
-        service_id:_id,
-        comment: req.body.comment
-    }
+//     const Comment = {
+//         service_id:_id,
+//         comment: req.body.comment
+//     }
 
-    if(!user_data){
-        res.status(200).send({
-            statue: 0,
-            data:'',
-            msg:"user not exists",
-            error:''
-        })
-    }
-    try{
-        user_data.user_comments.push(Comment)
-        user_data.save()
+//     if(!user_data){
+//         res.status(200).send({
+//             statue: 0,
+//             data:'',
+//             msg:"user not exists",
+//             error:''
+//         })
+//     }
+//     try{
+//         user_data.user_comments.push(Comment)
+//         user_data.save()
 
-        res.status(200).send({
-            statue: 1,
-            data:user_data,
-            msg:"comment added",
-            error:''
-        })
-    }catch(e){
-        res.status(200).send({
-            statue: 0,
-            data:'',
-            msg:"Addition failed",
-            error:e
-        })
-    }
-    
-
-
+//         res.status(200).send({
+//             statue: 1,
+//             data:user_data,
+//             msg:"comment added",
+//             error:''
+//         })
+//     }catch(e){
+//         res.status(200).send({
+//             statue: 0,
+//             data:'',
+//             msg:"Addition failed",
+//             error:e
+//         })
+//     }
     
 
 
-
-})
-
-router.post('/deleteComment/:CommentId',auth, async (req, res)=>{
-    const comment_id= req.params.CommentId
-    let user_data = await User.findById(req.data._id)
     
-    try{
-        let i = 0 
-        if(!user_data)throw new Error()
-        else{
-            user_data.user_comments.filter((singleComment)=>{
 
-                if (singleComment._id == comment_id){
-                    user_data.user_comments.splice(i, 1)
-                    user_data.save()
-                    res.status(200).send({ 
-                        statue : 1,
-                        msg: "Comment Deleted",
-                        data : user_data,
-                        error: ''
 
-                    }) 
-                }
-                i++
-            }) 
-        }
+
+// })
+
+// router.post('/deleteComment/:CommentId',auth, async (req, res)=>{
+//     const comment_id= req.params.CommentId
+//     let user_data = await User.findById(req.data._id)
+    
+//     try{
+//         let i = 0 
+//         if(!user_data)throw new Error()
+//         else{
+//             user_data.user_comments.filter((singleComment)=>{
+
+//                 if (singleComment._id == comment_id){
+//                     user_data.user_comments.splice(i, 1)
+//                     user_data.save()
+//                     res.status(200).send({ 
+//                         statue : 1,
+//                         msg: "Comment Deleted",
+//                         data : user_data,
+//                         error: ''
+
+//                     }) 
+//                 }
+//                 i++
+//             }) 
+//         }
      
-    }
-    catch(e){
-        res.status(500).send({
-            status:0,
-            msg:"can't find this comment",
-            data: "",
-            error: e
-        })
-    }
+//     }
+//     catch(e){
+//         res.status(500).send({
+//             status:0,
+//             msg:"can't find this comment",
+//             data: "",
+//             error: e
+//         })
+//     }
 
-})
+// })
 
 router.post('/deleteOne',auth, async (req, res)=>{
     try{
@@ -324,21 +324,29 @@ router.post('/deleteOne',auth, async (req, res)=>{
     
 })
 
-
+let name = ''
 const storage = multer.diskStorage({
     destination: function(req,file,cb){
         cb(null,'images/users_profile')
     },
     filename: function(req,file,cb){
-        cb(null, req.data._id + '-' + file.originalname)
+        name= file.originalname
+        cb(null, file.originalname)
     }
     
 })
 
 const upload = multer({storage: storage})
 
-router.post('/user/UploadProfileImg',auth, upload.single('upload'), (req, res)=>{
-    res.send("uploded")
+router.post('/user/UploadProfileImg',auth, upload.single('upload'), async (req, res)=>{
+    try{
+        req.data.user_profile_img = `images/users_profile/${name}`
+        await req.data.save()
+        res.send({
+            msg :"uploded"
+        })
+    }catch(e){console.log(e)}
+    
 })
 
 

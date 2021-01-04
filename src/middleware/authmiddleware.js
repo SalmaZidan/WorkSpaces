@@ -14,7 +14,7 @@ const auth = async (req, res, next)=>{
         next()
     }
     catch(e){
-        res.status(500).send({
+        res.status(200).send({
             status:0, 
             msg: "need auth",
             data: ""
