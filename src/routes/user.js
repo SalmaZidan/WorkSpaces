@@ -53,10 +53,10 @@ router.get('/Users/:type', async(req,res)=>{
 })
 
 // get single user by id 
-router.get('/singleUser/:id',auth, async(req,res)=>{
-    _id = req.params.id
+router.get('/singleUser',auth, async(req,res)=>{
+    //_id = req.params.id
     try{
-        const user_data = await User.findById(_id)
+        const user_data = await User.findById(req.data._id)
         res.status(200).send({
             status:1,
             data: user_data,
@@ -178,7 +178,7 @@ router.post('/login', async (req, res)=>{
 })
 
 // logout
-router.patch('/logout', async (req, res)=>{
+router.patch('/logout',auth, async (req, res)=>{
     try{
         const token = req.header('Authorization').replace("Bearer ", "")
         const decodedToken = jwt.verify(token, 'tsrnmb')

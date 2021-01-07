@@ -110,7 +110,7 @@ router.delete('/workingSpace/:id', async(req,res)=>{
     }
 })
 //get single workingSpace
-router.get('/workingSpace/:id', async(req,res)=>{
+router.get('/workingSpace/:id',auth, async(req,res)=>{
     const _id = req.params.id
     try{
         const workingSpace = await WorkingSpace.findById(_id)
