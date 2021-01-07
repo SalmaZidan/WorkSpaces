@@ -34,9 +34,9 @@ const UserSchema = new mongoose.Schema({
         maxLength : 15,
     },
     user_address:{
-        country:{type:String},
-        city:{type:String},
-        neighbarhood:{type:String} //edit name
+        country:{type:String,required: true},
+        city:{type:String,required: true},
+        detailedAddress:{type:String,required: true} 
     },
     tokens:[
         {

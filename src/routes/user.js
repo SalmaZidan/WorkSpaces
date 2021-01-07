@@ -7,6 +7,7 @@ const multer = require('multer');
 
 const router = new express.Router()
 
+// add new user 
 router.post('/User/Registration', async (req, res)=>{
     const user_data = new User(req.body)
     try{
@@ -31,6 +32,7 @@ router.post('/User/Registration', async (req, res)=>{
 
 })
 
+// get user by type
 router.get('/Users/:type', async(req,res)=>{
     type = req.params.type
     try{
@@ -50,6 +52,7 @@ router.get('/Users/:type', async(req,res)=>{
     }
 })
 
+// get single user by id 
 router.get('/singleUser/:id',auth, async(req,res)=>{
     _id = req.params.id
     try{
@@ -69,6 +72,7 @@ router.get('/singleUser/:id',auth, async(req,res)=>{
     }
 })
 
+// edit user data
 router.patch('/UserUpdate/:id',auth, async(req,res)=>{
     const _id= req.params.id
     const updates = req.body
@@ -109,6 +113,7 @@ router.patch('/UserUpdate/:id',auth, async(req,res)=>{
     }
 })
 
+// change user password
 router.patch('/UpdatePassword/:id',auth, async(req,res)=>{
     const _id= req.params.id
     const updates = req.body
@@ -149,6 +154,7 @@ router.patch('/UpdatePassword/:id',auth, async(req,res)=>{
     }
 })
 
+// login
 router.post('/login', async (req, res)=>{
     try{
         const user_data = await User.findByCredentials(req.body.user_email , req.body.user_password) 
@@ -171,6 +177,7 @@ router.post('/login', async (req, res)=>{
 
 })
 
+// logout
 router.patch('/logout', async (req, res)=>{
     try{
         const token = req.header('Authorization').replace("Bearer ", "")
@@ -204,8 +211,9 @@ router.patch('/logout', async (req, res)=>{
 
 })
 
+// find all user
 router.get('/Users',auth, async(req,res)=>{
-    type = req.params.type
+
     try{
         const user_data = await User.find()
         res.status(200).send({
@@ -223,88 +231,7 @@ router.get('/Users',auth, async(req,res)=>{
     }
 })
 
-// router.post('/user/addComment/:ServiceId',auth, async (req, res)=>{
-//     const _id= req.params.ServiceId
-    
-//     let user_data = await User.findById(req.data._id) // from auth
-
-//     const Comment = {
-//         service_id:_id,
-//         comment: req.body.comment
-//     }
-
-//     if(!user_data){
-//         res.status(200).send({
-//             statue: 0,
-//             data:'',
-//             msg:"user not exists",
-//             error:''
-//         })
-//     }
-//     try{
-//         user_data.user_comments.push(Comment)
-//         user_data.save()
-
-//         res.status(200).send({
-//             statue: 1,
-//             data:user_data,
-//             msg:"comment added",
-//             error:''
-//         })
-//     }catch(e){
-//         res.status(200).send({
-//             statue: 0,
-//             data:'',
-//             msg:"Addition failed",
-//             error:e
-//         })
-//     }
-    
-
-
-    
-
-
-
-// })
-
-// router.post('/deleteComment/:CommentId',auth, async (req, res)=>{
-//     const comment_id= req.params.CommentId
-//     let user_data = await User.findById(req.data._id)
-    
-//     try{
-//         let i = 0 
-//         if(!user_data)throw new Error()
-//         else{
-//             user_data.user_comments.filter((singleComment)=>{
-
-//                 if (singleComment._id == comment_id){
-//                     user_data.user_comments.splice(i, 1)
-//                     user_data.save()
-//                     res.status(200).send({ 
-//                         statue : 1,
-//                         msg: "Comment Deleted",
-//                         data : user_data,
-//                         error: ''
-
-//                     }) 
-//                 }
-//                 i++
-//             }) 
-//         }
-     
-//     }
-//     catch(e){
-//         res.status(500).send({
-//             status:0,
-//             msg:"can't find this comment",
-//             data: "",
-//             error: e
-//         })
-//     }
-
-// })
-
+// delete my account
 router.post('/deleteOne',auth, async (req, res)=>{
     try{
         await User.deleteOne({_id : req.data._id})
@@ -324,6 +251,8 @@ router.post('/deleteOne',auth, async (req, res)=>{
     
 })
 
+
+// Upload img 
 let name = ''
 const storage = multer.diskStorage({
     destination: function(req,file,cb){

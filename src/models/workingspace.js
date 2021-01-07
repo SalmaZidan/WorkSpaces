@@ -8,17 +8,17 @@ const workingSpaceSchema = new mongoose.Schema({
         required: true
     },
     address: {
-        government:{
+        country:{
             type: String,
-            //required: true
-        }, //edit name 
+            required: true
+        },
         city:{
             type: String,
-            //required: true
+            required: true
         },
         detailedAddress:{
             type: String,
-            //required: true
+            required: true
         }
     },
     startTime: {
