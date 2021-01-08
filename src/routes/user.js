@@ -72,6 +72,27 @@ router.get('/singleUser',auth, async(req,res)=>{
     }
 })
 
+// get single user by id 
+router.get('/singleUserBy/:id',auth, async(req,res)=>{
+    _id = req.params.id
+    try{
+        const user_data = await User.findById(_id)
+        res.status(200).send({
+            status:1,
+            data: user_data,
+            msg: 'user data selected'
+        })
+    }
+    catch(e){
+        res.status(200).send({
+            status:0,
+            data: e,
+            msg: 'error loading user data'
+        })
+    }
+})
+
+
 // edit user data
 router.patch('/UserUpdate/:id',auth, async(req,res)=>{
     const _id= req.params.id
