@@ -9,9 +9,10 @@ import { WorkspaceService } from 'src/app/services/workspace.service';
   styleUrls: ['./show-all.component.css']
 })
 export class ShowAllComponent implements OnInit {
-
+  
   allWorkSpaces:any
-  server = "http://localhost:3000/"
+  IMGURL = "assets/"
+  //hh = " ../../../../../../../../images/workspace/StammtischS715 Welle7WorkspaceHeader.jpg "
   defaultImage = 'assets/default/Organize-Workspace.png'
   img :any
   constructor(private workspace:WorkspaceService, private router:Router) { }

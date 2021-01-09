@@ -19,7 +19,12 @@
               <h5 class="card-text">Address : {{ singleworkspace.address.country}}, {{ singleworkspace.address.city}}, {{ singleworkspace.address.detailedAddress}}</h5>
               <a class="card-text" routerLink="../workspace/{{singleworkspace._id}}"><small class="text-muted">Show More</small></a>
             </div>
-            <img [src]="singleworkspace.Profile_img || defaultImage " class="card-img-bottom" alt="...">
+            
+            <img [src]="  singleworkspace.Profile_img || defaultImage  " class="card-img-bottom" alt="...">
+            <!--
+                
+                <img src="{{'../../../../../../../../'+ singleworkspace.Profile_img}} " class="card-img-bottom" alt="...">
+             <img [src]="singleworkspace.Profile_img || defaultImage " class="card-img-bottom" alt="..."> -->
         </div>
 
     </div>

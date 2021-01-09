@@ -22,7 +22,7 @@
 
     
             <td *ngIf ="req.status == 'pendding' "> <button class="btn btn-danger" (click)="deletereq(req._id)"><i class="fa fa-trash-alt"></i></button>
-            <td *ngIf ="req.status == 'accepted' "> <button  type="button" class="btn btn-danger" (click)="deletereq(req._id)" disabled><i class="fa fa-trash-alt" ></i></button>
+            <td *ngIf ="req.status == 'accepted' || req.status == 'rejected' "> <button  type="button" class="btn btn-danger" (click)="deletereq(req._id)" disabled><i class="fa fa-trash-alt" ></i></button>
     
 
             </td>

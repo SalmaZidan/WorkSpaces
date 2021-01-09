@@ -28,10 +28,10 @@ export class LoginComponent implements OnInit {
     this._user.signIn(this.userModel).subscribe(data => {
       console.log(data);
       localStorage.setItem('token',`Bearer ${data['token']}`)
-
-      this._router.navigateByUrl('')
     }, error => {
       console.log(error);
+    },()=>{
+      this._router.navigateByUrl('')
     });
   }
   

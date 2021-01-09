@@ -16,26 +16,18 @@ export class HeaderComponent implements OnInit {
   
   constructor(private _user: UserService, private _router: Router) { }
 
-  test(){
-    this.token = localStorage.getItem('token');
-    if(!this.token){this.checkLogin = false}
-    else{this.checkLogin = true }
-
-    this._user.getUser().subscribe(data=>
-      { 
-        this.type = data.data.user_type;
-        this.workspaceID = data.data.workspace;
-        console.log(this.type)
-        
-      })
-      console.log(this.type)
-    }
-
-
   ngOnInit(): void {
-    this.test()
-  }
+      this.token = localStorage.getItem('token');
+      if(!this.token){this.checkLogin = false}
+      else{this.checkLogin = true }
 
+      this._user.getUser().subscribe(data=>
+        { 
+          this.type = data.data.user_type;
+          this.workspaceID = data.data.workspace;
+        })
+        
+  }
 
   logout(){
     this._user.logout().subscribe(data=>{
