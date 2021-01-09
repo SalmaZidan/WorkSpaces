@@ -1,0 +1,33 @@
+<div class="container my-5">
+
+    <h1 style="color:black;"> My Requsets:</h1>
+    <table class="table table-buserRequestsed table-hover text-center">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">WorkSpace Name</th>
+            <th scope="col">Date</th>
+            <th scope="col">Status</th>
+
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let req of userRequests; let i=index ; ">
+            <th scope="row">{{i+1}}</th>
+            <td>{{WorkspaceData[i]}}</td>
+            <td>{{req.date_created }}</td>
+            
+            <td>{{req.status}}</td>
+
+    
+            <td *ngIf ="req.status == 'pendding' "> <button class="btn btn-danger" (click)="deletereq(req._id)"><i class="fa fa-trash-alt"></i></button>
+            <td *ngIf ="req.status == 'accepted' "> <button  type="button" class="btn btn-danger" (click)="deletereq(req._id)" disabled><i class="fa fa-trash-alt" ></i></button>
+    
+
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    
+    </div>

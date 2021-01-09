@@ -1,0 +1,38 @@
+
+<body class="homepage">
+
+    <header id="header">
+
+        <nav class="navbar navbar-inverse navbar-expand-lg" role="banner">
+            <div class="container">
+                <div class="navbar-header">
+                </div>
+                <div><h1>WorkSpaces Resrvaition Site</h1></div>
+                
+                <div class="collapse navbar-collapse  navbar-right justify-content-end">
+                   
+                    <ul class="nav navbar-nav mt-5 ">
+                        <li class="active"><a href="">Home</a></li>
+                        <li *ngIf = "type == ''"><a href="">About Us</a></li>
+                        
+
+                        <li *ngIf = "type == 'client'"><a routerLink="workspaces">WorkSpaces</a></li>
+                        <li *ngIf = "type == ('workspace admin' || 'workspace employee')"><a routerLink="workspace/{{workspaceID}}">MY WorkSpace</a></li>
+
+
+                        <li *ngIf = "type == 'client'"><a routerLink="myRequest">MY Request</a></li>
+                        <li *ngIf = "type == ('workspace admin' || 'workspace employee')"><a routerLink="MyWorkRequest/{{workspaceID}}">WorkSpace Requests</a></li>
+
+
+
+                        <li *ngIf = "!checkLogin" ><a routerLink="login">LOGIN</a></li> 
+                        <li *ngIf = "checkLogin" ><a routerLink="profile">Profile</a></li> 
+                        
+                        <li *ngIf = "!checkLogin" ><a routerLink="signup">Rigstration</a></li> 
+                        <li *ngIf = "checkLogin"><a  (click)="logout()" >LOGOUT</a></li>                        
+                    </ul>
+                    
+                </div>
+            </div><!--/.container-->
+        </nav><!--/nav-->
+	</header>

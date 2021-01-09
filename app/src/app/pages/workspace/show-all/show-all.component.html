@@ -1,0 +1,26 @@
+<section id="portfolio">
+    <div class="container">
+
+        <div class="center">
+           <h2 class="mt-5">WorkSpaces</h2>
+           <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut <br> et dolore magna aliqua. Ut enim ad minim veniam</p>
+        </div>
+    
+
+        <ul class="portfolio-filter text-center">
+            <li><a class="btn btn-default active" href="#" data-filter="*">All WorkSpaces</a></li>
+            <li><a class="btn btn-default" href="#" data-filter=".bootstrap">Opening Now</a></li>
+        </ul><!--/#portfolio-filter-->
+
+        <div class="card m-5" *ngFor="let singleworkspace of allWorkSpaces">
+            <div class="card-body">
+              <h3 class="card-title">{{ singleworkspace.workingSpaceName }}</h3>
+              <h5 class="card-text">{{ singleworkspace.fullDesc}}</h5>
+              <h5 class="card-text">Address : {{ singleworkspace.address.country}}, {{ singleworkspace.address.city}}, {{ singleworkspace.address.detailedAddress}}</h5>
+              <a class="card-text" routerLink="../workspace/{{singleworkspace._id}}"><small class="text-muted">Show More</small></a>
+            </div>
+            <img [src]="singleworkspace.Profile_img || defaultImage " class="card-img-bottom" alt="...">
+        </div>
+
+    </div>
+</section><!--/#portfolio-item-->

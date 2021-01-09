@@ -1,0 +1,57 @@
+    
+<div *ngIf = "type == 'workspace admin'" style="width: 100%;" class="container justify-content-center m-5" >
+  <div  class="container btn-group " role="group" aria-label="Basic outlined example">
+    <button type="button" class="btn btn-outline-primary">Edit WorkSpace</button>
+    <button type="button" class="btn btn-outline-primary">Add Service</button>
+    <button type="button" class="btn btn-outline-primary">Add Emploee</button>
+  </div>
+</div>
+
+
+<div class="container">
+
+  <h1 style="color:black;" class="m-5"> {{ workspace.workingSpaceName }} Co-WorkingSpace </h1>
+ 
+
+
+  <div class="card m-5" >
+    <div class="card-body" style="font-size:20px;">
+      <p class="card-text">{{ workspace.fullDesc}}</p>
+      <h4 class="card-text">Address : {{ workspace.address.country}}, {{ workspace.address.city}}, {{ workspace.address.detailedAddress}}</h4>
+    </div>
+    <img [src]="workspace.Profile_img || defaultImage " class="card-img-bottom" alt="...">
+
+  </div>
+
+<div class="container" style="width: 98%;">
+<h1 style="color:black;" class="m-5"> Services: </h1>
+
+<div class="card-group" *ngFor="let singleServices of workspace.services ;let i = index">
+
+
+  <div class="card m-3">
+    <img class="card-img-top" [src]="defaultImageService " alt="Card image cap">
+    <div class="card-body" style="font-size:20px;">
+      <!-- <h5 class="card-title">{{singleServices._id}}</h5> -->
+      <h5 class="card-title">{{singleServices.serviceName}}</h5>
+      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+      <p class="card-text"><small class="text-muted">Cost : {{singleServices.cost}} EG</small></p>
+      <button type="button" class="btn btn-danger" (click)="ShowHideButton(singleServices._id)">Reserve</button>
+
+      <div *ngIf="showMainContent == singleServices._id" class="my-5">
+        <form #Request="ngForm" (ngSubmit)="makeRequest()" class="contact-form">
+        <label>Date:</label>
+        <input type="date" name="date" [(ngModel)]="reqest.reservation_date">
+        <label class="mx-5">Number of Huors:</label>
+        <input type="text" name="number" [(ngModel)]="reqest.guests_number">
+        <button type="submit" class="btn btn-success mx-5">Confirm</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+</div>
+
