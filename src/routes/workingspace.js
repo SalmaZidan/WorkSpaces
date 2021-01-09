@@ -347,7 +347,7 @@ router.post('/workingSpace/deletecomment/:workspace_id/:Service_id/:comment_id',
 let name = ''
 const storage = multer.diskStorage({
     destination: function(req,file,cb){
-        cb(null,'images/workspace')
+        cb(null,'workSpace-App/src/assets/images/workspace')
     },
     filename: function(req,file,cb){
         name= file.originalname
@@ -362,7 +362,7 @@ router.post('/workspace/UploadProfileImg/:workspace_id', upload.single('upload')
     const workspace_id = req.params.workspace_id
     try{
         const workingSpace = await WorkingSpace.findById(workspace_id)
-        workingSpace.Profile_img = `images/workspace/${name}`
+        workingSpace.Profile_img = `assets/images/workspace/${name}`
         await workingSpace.save()
         res.send({
             msg :"uploded"

@@ -1,0 +1,25 @@
+Done =>
+
+1) BackEnd 
+2) Front 
+    * Registration 
+    * Login
+    * Show All & single Workspaces
+    * Show Services 
+    * Reservetion ( Clinet + Workspace)
+    * Display Request with control on pendding requests for Clinet
+    * Display Request with control on pendding requests to accept or reject for workspace employee
+    * show Profile  
+    * Logout
+
+
+
+Next=>
+
+  Front:
+    * Edit Profile 
+    * Edit WorkSpace ( add & edit  service , add employee )
+    * search by Address or by another information 
+    * Delete My account 
+    * payment
+    * Validation Of forms & gardes on the website
